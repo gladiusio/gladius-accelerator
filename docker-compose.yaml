@@ -1,0 +1,42 @@
+version: '3'
+services:
+  masternode:
+    image: gladiusio/masternode:accelerator-0.1.0
+    container_name: masternode
+    environment:
+      - VERBOSE_LOG_LEVEL=0
+      - FLAGS_enable_p2p=false
+      - FLAGS_enable_service_worker=true
+      - FLAGS_sw_path=/root/.gladius/service/service-worker.js
+      - FLAGS_ip=0.0.0.0
+      - FLAGS_ssl_port=443
+      - FLAGS_upgrade_insecure=true
+      - FLAGS_origin_port=80
+      - FLAGS_cert_path=/root/.gladius/certs/live/${DOMAIN_NAME}/cert.pem
+      - FLAGS_key_path=/root/.gladius/certs/live/${DOMAIN_NAME}/privkey.pem
+      - FLAGS_origin_host=${ORIGIN_HOST}
+      - FLAGS_protected_domain=${DOMAIN_NAME}
+    ports:
+      - "443:443/tcp"
+      - "80:80/tcp"
+    volumes:
+      - "data:/root/.gladius"
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${PWD}/data"
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${PWD}/data/certs"
+  service:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${PWD}/data/service"

@@ -1,0 +1,32 @@
+version: '3'
+services:
+  service-worker:
+    image: gladiusio/service-worker:accelerator-latest
+    container_name: service-worker
+    environment:
+      - SW_DOMAIN=${DOMAIN_NAME}
+    volumes:
+      - "service:/build"
+  certbot:
+    image: gladiusio/masternode-init:release-0.1.0
+    container_name: certbot
+    environment:
+      - MN_DOMAIN=${DOMAIN_NAME}
+      - MN_EMAIL=${CERTBOT_EMAIL}
+    ports:
+      - "80:80/tcp"
+    volumes:
+      - "certs:/etc/letsencrypt"
+volumes:
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${PWD}/data/certs"
+  service:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: "${PWD}/data/service"
